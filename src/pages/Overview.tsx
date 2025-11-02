@@ -10,13 +10,11 @@ import {
   LineChart, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   PieChart, Pie, Cell,
-  RadialBarChart, RadialBar
+  RadialBarChart, RadialBar,
+  PolarAngleAxis
 } from 'recharts'
 
-// ---------- Realistic monthly metrics (dummy production-like data) ----------
 const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-
-// These would normally come from your API. You can wire them later.
 const monthlyMetrics = [
   { m: 'Jan', revenue: 102_400, users: 18450, churn: 1.4, arpu: 5.55, mrrStarter: 18_000, mrrPro: 52_000, mrrEnt: 32_400, nps: 62 },
   { m: 'Feb', revenue: 107_900, users: 19120, churn: 1.35, arpu: 5.64, mrrStarter: 19_200, mrrPro: 54_300, mrrEnt: 34_400, nps: 63 },
@@ -72,12 +70,9 @@ export default function Overview() {
         {kpis.map((k) => <KPI key={k.title} {...k} />)}
       </div>
 
-      {/* Existing traffic area chart */}
       <AreaChartCard />
 
-      {/* ---------- New premium chart grid ---------- */}
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-        {/* 1) MRR by Plan (Stacked Bars) */}
         <div className="panel p-5">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-semibold">MRR by Plan</h3>
@@ -99,7 +94,6 @@ export default function Overview() {
           </div>
         </div>
 
-        {/* 2) Revenue vs Active Users (Dual Axis Lines) */}
         <div className="panel p-5">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-semibold">Revenue vs Active Users</h3>
@@ -121,14 +115,12 @@ export default function Overview() {
           </div>
         </div>
 
-        {/* 3) Plan Distribution (Donut) + NPS (Radial) */}
         <div className="panel p-5">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-semibold">Plan Distribution & NPS</h3>
             <span className="text-xs opacity-70">Current snapshot</span>
           </div>
           <div className="grid grid-cols-2 gap-2 h-64">
-            {/* Donut */}
             <div className="relative">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -155,29 +147,32 @@ export default function Overview() {
               </div>
             </div>
 
-            {/* Radial NPS */}
-            <div className="relative">
-              <ResponsiveContainer width="100%" height="100%">
-                <RadialBarChart
-                  cx="50%"
-                  cy="50%"
-                  innerRadius="50%"
-                  outerRadius="85%"
-                  barSize={10}
-                  data={[{ name: 'NPS', value: monthlyMetrics[monthlyMetrics.length - 1].nps }]}
-                >
-                  <RadialBar
-                    dataKey="value"
-                    minAngle={15}
-                    clockWise
-                    fill="#8b5cf6"
-                  />
-                  <Tooltip />
-                </RadialBarChart>
-              </ResponsiveContainer>
+          <div className="relative">
+            <ResponsiveContainer width="100%" height="100%">
+              <RadialBarChart
+                cx="50%"
+                cy="50%"
+                innerRadius="50%"
+                outerRadius="85%"
+                barSize={10}
+                startAngle={90}  
+                endAngle={-270}
+                data={[
+                  { name: 'NPS', value: monthlyMetrics[monthlyMetrics.length - 1].nps, fill: '#8b5cf6' }
+                ]}
+              >
+                <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
+                <RadialBar dataKey="value" fill="#8b5cf6" />
+                <Tooltip />
+              </RadialBarChart>
+            </ResponsiveContainer>
+
+  
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
-                  <div className="text-2xl font-semibold">{monthlyMetrics[monthlyMetrics.length - 1].nps}</div>
+                  <div className="text-2xl font-semibold">
+                    {monthlyMetrics[monthlyMetrics.length - 1].nps}
+                  </div>
                   <div className="text-xs opacity-70">NPS</div>
                 </div>
               </div>
@@ -186,7 +181,6 @@ export default function Overview() {
         </div>
       </div>
 
-      {/* Existing Customers table */}
       <UsersTable />
     </div>
   )

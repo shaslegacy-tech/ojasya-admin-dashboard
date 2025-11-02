@@ -6,6 +6,7 @@ import {
   getSortedRowModel,
   getPaginationRowModel,
   useReactTable,
+  SortingState,
 } from '@tanstack/react-table'
 
 type User = {
@@ -20,7 +21,7 @@ const data: User[] = Array.from({ length: 18 }).map((_, i) => ({
   name: `User ${i+1}`,
   email: `user${i+1}@example.com`,
   plan: ['Starter','Pro','Enterprise'][i%3],
-  mrr: [9,29,149][i%3],
+  mrr: [80,2900,14900][i%3],
   status: i%4===0 ? 'Paused' : 'Active'
 }))
 
@@ -28,20 +29,20 @@ const columns: ColumnDef<User>[] = [
   { header: 'Name', accessorKey: 'name' },
   { header: 'Email', accessorKey: 'email' },
   { header: 'Plan', accessorKey: 'plan' },
-  { header: 'MRR', accessorKey: 'mrr', cell: ({ getValue }) => `$${getValue<number>().toLocaleString()}` },
-  { header: 'Status', accessorKey: 'status',
-    cell: ({ getValue }) => (
-      <span className={getValue()==='Active'
-        ? 'rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs font-semibold text-emerald-400'
-        : 'rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-semibold text-amber-400'}>
-        {getValue()}
-      </span>
-    )
-  },
+  { header: 'MRR', accessorKey: 'mrr', cell: ({ getValue }) => `₹${getValue<number>().toLocaleString()}` },
+{ header: 'Status', accessorKey: 'status',
+  cell: ({ getValue }) => {
+    const v = getValue<User['status']>()
+    const cls = v === 'Active'
+      ? 'rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs font-semibold text-emerald-400'
+      : 'rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-semibold text-amber-400'
+    return <span className={cls}>{v}</span>
+  }
+},
 ]
 
 export default function UsersTable() {
-  const [sorting, setSorting] = React.useState([] as any)
+  const [sorting, setSorting] = React.useState<SortingState>([])
   const table = useReactTable({
     data,
     columns,
@@ -68,8 +69,8 @@ export default function UsersTable() {
               <tr key={hg.id}>
                 {hg.headers.map(h => (
                   <th key={h.id} className="px-4 py-3 font-medium select-none cursor-pointer" onClick={h.column.getToggleSortingHandler()}>
-                    {flexRender(h.column.columnDef.header, h.getContext())}
-                    {{"asc":" ↑","desc":" ↓"}[h.column.getIsSorted() as string] ?? ""}
+                    {flexRender(h.column.columnDef.header, h.getContext()) as React.ReactNode}
+                    {({ asc: ' ↑', desc: ' ↓' } as Record<string, string>)[h.column.getIsSorted() as string] ?? ''}
                   </th>
                 ))}
               </tr>
@@ -80,7 +81,7 @@ export default function UsersTable() {
               <tr key={r.id} className="hover:panel-hover">
                 {r.getVisibleCells().map(c => (
                   <td key={c.id} className="px-4 py-3">
-                    {flexRender(c.column.columnDef.cell ?? c.column.columnDef.header, c.getContext())}
+                    {(flexRender(c.column.columnDef.cell, c.getContext()) ?? String(c.getValue() as any)) as React.ReactNode}
                   </td>
                 ))}
               </tr>
