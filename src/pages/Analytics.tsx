@@ -3,6 +3,7 @@ import TableCard from '../widgets/TableCard'
 import Button from '../ui/Button'
 import { ColumnDef } from '@tanstack/react-table'
 import { Boxes, GraduationCap, ShieldBan, ClipboardList, Download, Plus } from 'lucide-react'
+import clsx from 'clsx'
 
 type Row = {
   id: number
@@ -68,21 +69,35 @@ const cardVariants = {
   show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.35, ease: 'easeOut' } }
 }
 
-function SectionTitle({ icon: Icon, label, hint }: { icon: React.ComponentType<any>, label: string, hint?: string }) {
+type SectionTitleProps = {
+  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>
+  label: string
+  hint?: string
+  className?: string
+}
+
+function SectionTitle({ icon: Icon, label, hint, className }: SectionTitleProps) {
   return (
-    <div className="flex items-center justify-between">
+    <div className={clsx("relative z-10 flex items-center justify-between", className)}>
       <div className="flex items-center gap-2">
-        <div className="h-8 w-8 grid place-items-center rounded-xl bg-black/5 dark:bg-white/10 ring-1 ring-black/10 dark:ring-white/10">
-          <Icon className="h-4 w-4 opacity-80" />
-        </div>
+        {Icon && (
+          <div className="h-8 w-8 grid place-items-center rounded-xl bg-black/5 dark:bg-white/10 ring-1 ring-black/10 dark:ring-white/10">
+            <Icon className="h-4 w-4 opacity-80" aria-hidden="true" />
+          </div>
+        )}
         <div>
-          <h3 className="text-sm font-semibold tracking-wide html:not(.dark):!text-slate-900 dark:!text-white/90">
+          {/* hooks for CSS overrides */}
+          <h3 className="section-title text-sm font-semibold tracking-wide">
             {label}
           </h3>
-          {hint && <p className="text-xs text-slate-600 dark:text-white/60">{hint}</p>}
+          {hint && (
+            <p className="section-sub text-xs">
+              {hint}
+            </p>
+          )}
         </div>
       </div>
-      {/* subtle gradient underline */}
+
       <div className="hidden xl:block h-[2px] w-24 rounded-full bg-gradient-to-r from-indigo-400 via-fuchsia-400 to-pink-400 opacity-60" />
     </div>
   )
@@ -98,11 +113,11 @@ export default function Analytics() {
     >
       {/* Top bar */}
       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-lg md:text-xl font-extrabold tracking-tight html:not(.dark):!text-slate-900 dark:!text-white">
+        <div className="relative z-10 space-y-1">
+           <h2 className="page-title text-lg md:text-xl font-extrabold tracking-tight">
             Analytics
           </h2>
-          <p className="text-sm text-slate-600 dark:text-white/60">
+           <p className="page-sub text-sm">
             Masters & operational datasets at a glance
           </p>
         </div>

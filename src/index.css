@@ -317,3 +317,23 @@ html:not(.dark) :focus-visible {
 html:not(.dark) .content h3 {
   color: rgb(15 23 42) !important; /* slate-900 */
 }
+
+/* ===== Title visibility hard-fix (light + dark) ===== */
+html:not(.dark) .section-title { color: rgb(15 23 42) !important; opacity: 1 !important; mix-blend-mode: normal !important; }
+html:not(.dark) .section-sub   { color: rgb(71 85 105) !important; opacity: .95 !important; }
+
+html.dark .section-title { color: rgba(255,255,255,.9) !important; opacity: 1 !important; mix-blend-mode: normal !important; }
+html.dark .section-sub   { color: rgba(255,255,255,.6) !important; }
+
+.section-title, .section-sub { filter: none !important; }
+
+.section-title, .section-sub { position: relative; z-index: 10; }
+
+/* ===== Page title visibility (light + dark) ===== */
+html:not(.dark) .page-title { color: rgb(15 23 42) !important; opacity: 1 !important; mix-blend-mode: normal !important; }
+html:not(.dark) .page-sub   { color: rgb(71 85 105) !important; opacity: .95 !important; }
+html.dark .page-title { color: rgba(255,255,255,.95) !important; opacity: 1 !important; mix-blend-mode: normal !important; }
+html.dark .page-sub   { color: rgba(255,255,255,.6) !important; }
+
+/* lift above any decorative overlays */
+.page-title, .page-sub { position: relative; z-index: 10; filter: none !important; }
