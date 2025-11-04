@@ -9,7 +9,8 @@ import {
   SortingState,
 } from '@tanstack/react-table'
 import Button from '../ui/Button'
-import { Search } from 'lucide-react'
+import { Search, X } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 type TableCardProps<T extends { id?: string | number }> = {
   columns: ColumnDef<T, any>[]
@@ -43,6 +44,7 @@ export default function TableCard<T extends { id?: string | number }>({
 }: TableCardProps<T>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [query, setQuery] = React.useState('')
+  const [focused, setFocused] = React.useState(false)
   const q = useDebounced(query, 250).toLowerCase().trim()
 
   const keys = React.useMemo<(keyof T)[]>(() => {
@@ -74,15 +76,42 @@ export default function TableCard<T extends { id?: string | number }>({
   return (
     <div className="panel overflow-hidden">
       <div className="flex items-center justify-end gap-2 px-4 py-3 border-b border-black/10 dark:border-white/10 bg-white/60 dark:bg-transparent">
-        <div className="flex items-center gap-2 rounded-2xl px-3 h-9 ring-1 ring-black/10 dark:ring-white/10 bg-white/60 dark:bg-white/5">
-          <Search className="h-4 w-4 opacity-70" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={searchPlaceholder}
-            className="bg-transparent outline-none text-sm placeholder:opacity-60 w-40 md:w-56"
-          />
-        </div>
+        <motion.div
+          className="relative group"
+          initial={false}
+          animate={{ scale: focused ? 1.01 : 1 }}
+          transition={{ type: 'spring', stiffness: 380, damping: 28, mass: 0.22 }}
+        >
+          {/* gradient BORDER wrapper (no fill) */}
+          <div className="p-[1.5px] rounded-2xl transition-all duration-200 bg-transparent group-focus-within:bg-gradient-to-r from-indigo-400/60 via-fuchsia-400/60 to-pink-400/60">
+            <div className="relative flex items-center gap-2 h-10 pl-3 pr-2 rounded-[14px] bg-white/80 dark:bg-white/5 backdrop-blur [transition:box-shadow_.2s,background_.2s,width_.25s] w-40 md:w-64 focus-within:w-48 md:focus-within:w-72 shadow-[inset_0_0_0_1px_rgba(2,6,23,0.10)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12)]">
+              <Search className="h-4 w-4 opacity-70" />
+
+              <motion.input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onFocus={() => setFocused(true)}
+                onBlur={() => setFocused(false)}
+                placeholder={searchPlaceholder}
+                className="bg-transparent outline-none focus:outline-none focus-visible:outline-none ring-0 focus:ring-0 focus-visible:ring-0 border-0 shadow-none appearance-none text-sm placeholder:opacity-60 w-full caret-slate-700 dark:caret-white"
+                initial={false}
+                animate={{ opacity: focused ? 1 : 0.95 }}
+                transition={{ duration: 0.2 }}
+              />
+
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => setQuery('')}
+                  className="grid place-items-center rounded-md p-1 hover:bg-black/10 dark:hover:bg-white/10 transition"
+                  aria-label="Clear search"
+                >
+                  <X className="h-3.5 w-3.5 opacity-70" />
+                </button>
+              )}
+            </div>
+          </div>
+        </motion.div>
 
         {rightActions ?? (
           <>
