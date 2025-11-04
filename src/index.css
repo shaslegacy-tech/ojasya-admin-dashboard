@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@reference "tailwindcss";
 
 /* =====================
    Theme Tokens
@@ -14,18 +15,63 @@
   --brand: 99 102 241;
   --brand-strong: 79 70 229;
   --brand-contrast: 255 255 255;
-  --ring: 59 130 246;
+  --ring: 59 130 246; /* focus ring accent */
 }
+
+/* === Light-mode visibility hardeners (high specificity + !important) === */
+
+/* Panels */
+html:not(.dark) .panel {
+  background: color-mix(in oklab, white 96%, transparent) !important;
+  border-color: rgba(2, 6, 23, 0.10) !important;  /* like slate-950/10 */
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.05) !important;
+}
+
+/* ==== Strong light-mode header for tables ==== */
+html:not(.dark) .table-thead {
+  /* a touch darker than before, with subtle gradient and divider */
+  background: linear-gradient(to bottom, rgba(2, 6, 23, 0.08), rgba(2, 6, 23, 0.05)) !important;
+  box-shadow: inset 0 -1px 0 rgba(2, 6, 23, 0.12) !important; /* bottom rule */
+  backdrop-filter: saturate(120%);
+}
+
+html:not(.dark) .table-thead th {
+  color: rgb(15 23 42) !important;         /* slate-900 */
+  font-weight: 700;                         /* ensure bold weight wins */
+}
+
+/* optional: faint vertical separators between header cells */
+html:not(.dark) .table-thead th + th {
+  box-shadow: inset 1px 0 0 rgba(2, 6, 23, 0.06);
+}
+
+/* Light-mode row readability */
+html:not(.dark) .panel tbody td { color: rgb(30 41 59) !important; }  /* slate-800 */
+html:not(.dark) .panel tbody tr:nth-child(even) { background: rgba(0,0,0,0.025) !important; }
+html:not(.dark) .panel tbody tr:hover { background: rgba(0,0,0,0.05) !important; }
+
+
+/* Panel header borders (no white borders in light) */
+html:not(.dark) .panel .border-b,
+html:not(.dark) .panel [class*="border-b"] {
+  border-color: rgba(2,6,23,0.10) !important;
+}
+
+/* Buttons in light (ghost/soft) should always be readable */
+html:not(.dark) button {
+  color: inherit; /* allow specific button classes to override, but no unexpected white */
+}
+
 
 /* Inky premium dark */
 html.dark {
   color-scheme: dark;
-  --surface: 10 14 28;
-  --surface-foreground: 214 219 235;
-  --surface-card: 15 22 40;
-  --surface-border: 255 255 255;
-  --brand: 139 92 246;
-  --brand-strong: 99 102 241;
+  --surface: 10 14 28;                 /* page bg */
+  --surface-foreground: 214 219 235;   /* readable text */
+  --surface-card: 15 22 40;            /* card base */
+  --surface-border: 255 255 255;       /* source for borders */
+  --brand: 139 92 246;                 /* violet-500 */
+  --brand-strong: 99 102 241;          /* indigo-500 */
   --brand-contrast: 10 14 28;
   --ring: 139 92 246;
 }
@@ -33,36 +79,23 @@ html.dark {
 /* =====================
    Base / Resets
    ===================== */
-
-html {
-  background-color: rgb(var(--surface) / 1);
-  color: rgb(var(--surface-foreground) / 1);
-}
-
-body {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  scroll-behavior: smooth;
-}
-
-:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px rgb(var(--ring) / 0.35);
-}
-
-/* Scrollbars */
+html { background-color: rgb(var(--surface) / 1); color: rgb(var(--surface-foreground) / 1); }
+body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+* { scroll-behavior: smooth; }
+:focus-visible { outline: none; box-shadow: 0 0 0 2px rgb(var(--ring) / 0.35); }
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 999px; }
 ::-webkit-scrollbar-track { background: transparent; }
 html.dark ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); }
+html.dark ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+
+/* Hide scrollbars helper (use on elements that shouldn't show bars) */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* =====================
-   Inky layered background
+   Inky layered app background
    ===================== */
-
 .ink-bg::before,
 .ink-bg::after {
   content: "";
@@ -81,96 +114,206 @@ html.dark ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); }
 }
 
 /* =====================
-   Utilities
+   Semantic utilities
    ===================== */
 .bg-surface { background-color: rgb(var(--surface) / 1); }
 .text-surface-foreground { color: rgb(var(--surface-foreground) / 1); }
 .border-surface { border-color: rgb(var(--surface-border) / 0.16); }
 .bg-card { background-color: rgb(var(--surface-card) / 1); }
-.text-muted { color: rgba(100,116,139,.9); }
+.text-muted { color: color-mix(in oklab, rgb(var(--surface-foreground) / 1) 60%, transparent); }
+.text-subtle { color: color-mix(in oklab, rgb(var(--surface-foreground) / 1) 45%, transparent); }
 
-/* ========== Panel Styles ========== */
+/* Panels */
 .panel {
   border-width: 1px;
   border-color: rgb(var(--surface-border) / 0.14);
-  background: rgb(var(--surface-card) / 1);
+  background-color: color-mix(in oklab, rgb(var(--surface-card) / 1) 90%, transparent);
   border-radius: 1rem;
   box-shadow: 0 8px 30px rgba(0,0,0,0.06);
 }
 .dark .panel {
-  background: color-mix(in oklab, rgb(var(--surface-card)), transparent 30%);
-  border-color: rgb(var(--surface-border) / 0.20);
+  background-color: color-mix(in oklab, rgb(var(--surface-card) / 1) 72%, transparent);
+  border-color: rgb(var(--surface-border) / 0.18);
   box-shadow: 0 18px 60px rgba(0,0,0,0.45);
 }
+.hover\:panel-hover:hover { background-color: color-mix(in oklab, rgb(var(--surface-card) / 1) 92%, transparent); }
+.dark .hover\:panel-hover:hover { background-color: color-mix(in oklab, rgb(var(--surface-card) / 1) 54%, transparent); }
 
-/* Light mode improvement */
-html:not(.dark) .panel {
-  background: white !important;
-  border-color: rgba(0,0,0,0.10) !important;
+/* Glass cards (generic) */
+.glass {
+  backdrop-filter: saturate(160%) blur(18px);
+  -webkit-backdrop-filter: saturate(160%) blur(18px);
+  background-color: color-mix(in oklab, rgb(255 255 255) 70%, transparent);
+}
+.dark .glass {
+  background-color: color-mix(in oklab, rgb(10 16 32) 88%, transparent);
+}
+
+.shadow-soft { box-shadow: 0 10px 40px rgba(0,0,0,0.08); }
+.shadow-elevated { box-shadow: 0 18px 60px rgba(0,0,0,0.18); }
+
+/* =====================
+   Unified app chrome (Sidebar + Navbar)
+   ===================== */
+.chrome {
+  backdrop-filter: saturate(165%) blur(18px);
+  -webkit-backdrop-filter: saturate(165%) blur(18px);
+  background-color: color-mix(in oklab, rgb(255 255 255) 70%, transparent);
+  border-color: rgb(var(--surface-border) / 0.14);
+  border-style: solid;
+}
+.dark .chrome {
+  /* slightly stronger than .glass for clear shell */
+  background-color: color-mix(in oklab, rgb(10 16 32) 90%, transparent);
+  border-color: rgb(var(--surface-border) / 0.16);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.55);
+}
+
+/* Edge-specific borders */
+.chrome--right  { border-width: 0 1px 0 0; }  /* Sidebar */
+.chrome--bottom { border-width: 0 0 1px 0; }  /* Navbar */
+
+/* =====================
+   Inky glass sidebar
+   ===================== */
+.sidebar-glass {
+  position: relative;
+  backdrop-filter: saturate(170%) blur(20px);
+  -webkit-backdrop-filter: saturate(170%) blur(20px);
+  border-right-width: 1px;
+  background-color: color-mix(in oklab, rgb(255 255 255) 82%, transparent);
+  border-right-color: rgba(2,6,23,0.12); /* slate-950/12 */
+  color: rgb(15 23 42);                  /* slate-900 */
+}
+.dark .sidebar-glass {
+  /* stronger, inkier */
+  background-color: color-mix(in oklab, rgb(10 16 32) 92%, transparent);
+  border-right-color: rgba(255,255,255,0.14);
+  color: rgb(226 232 240); /* slate-200 */
+  box-shadow: 0 26px 90px rgba(0,0,0,0.55);
+}
+
+/* Gloss edge + vignette for depth */
+.sidebar-glass::before,
+.sidebar-glass::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  left: 0; right: 0;
+}
+.sidebar-glass::before {
+  top: 0; height: 44px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.10), transparent);
+}
+.dark .sidebar-glass::before {
+  background: linear-gradient(to bottom, rgba(255,255,255,0.06), transparent);
+}
+.sidebar-glass::after {
+  bottom: 0; height: 60px;
+  background: linear-gradient(to top, rgba(0,0,0,0.10), transparent);
+}
+.dark .sidebar-glass::after {
+  background: linear-gradient(to top, rgba(0,0,0,0.28), transparent);
 }
 
 /* =====================
-   Tables
+   Sidebar items
    ===================== */
-
-.table-thead {
-  background: linear-gradient(to bottom, rgba(2,6,23,0.08), rgba(2,6,23,0.04));
-  box-shadow: inset 0 -1px 0 rgba(2,6,23,0.12);
-  backdrop-filter: saturate(120%);
+.sidebar-section {
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: color-mix(in oklab, currentColor 55%, transparent);
 }
 
-html:not(.dark) .table-thead th {
-  color: rgb(15 23 42) !important;
-  font-weight: 700 !important;
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 14px;
+  padding: 0.5rem 0.75rem;
+  transition: background-color .18s ease, color .18s ease, transform .18s ease;
+}
+.dark .sidebar-item { color: rgba(255,255,255,0.95); opacity: .88; }
+.sidebar-item:hover { opacity: 1; }
+.dark .sidebar-item:hover { background: rgba(255,255,255,0.10); }
+
+/* Active pill — strong, but classy */
+.sidebar-item--active {
+  background: rgba(255,255,255,0.22);
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.26);
 }
 
-tbody td {
-  color: rgb(30 41 59);
+/* ---- Light mode fixes for sidebar items ---- */
+html:not(.dark) .sidebar-item { color: rgb(51 65 85); } /* slate-700 */
+html:not(.dark) .sidebar-item:hover { background: rgba(0,0,0,0.05); color: rgb(30 41 59); } /* slate-800 */
+
+/* Light active pill: visible on white, dark text */
+html:not(.dark) .sidebar-item--active {
+  background: rgba(0,0,0,0.06);
+  color: rgb(15 23 42); /* slate-900 */
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
 }
 
-html:not(.dark) tr:nth-child(even) {
-  background: rgba(0,0,0,0.02);
-}
+/* Section heading tone in light */
+html:not(.dark) .sidebar-section { color: rgb(100 116 139); } /* slate-500 */
 
 /* =====================
-   Sidebar
+   Tooltips (used for collapsed sidebar)
    ===================== */
-
-html:not(.dark) .sidebar-glass {
-  background: rgba(245,247,250,0.85);
-  backdrop-filter: blur(18px);
-  border-right-color: rgba(0,0,0,0.06);
-  color: rgb(15 23 42);
+.tooltip-bubble {
+  border-radius: 0.75rem;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  color: white;
+  background: rgba(0,0,0,0.80);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.28);
+  border: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: saturate(150%) blur(8px);
+}
+html.dark .tooltip-bubble {
+  background: rgba(255,255,255,0.08);
+  color: white;
+  border-color: rgba(255,255,255,0.18);
+}
+.tooltip-arrow {
+  width: 12px;
+  height: 12px;
+  transform: rotate(45deg);
+  background: rgba(0,0,0,0.80);
+  border: 1px solid rgba(255,255,255,0.15);
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  margin-top: -6px;
+}
+html.dark .tooltip-arrow {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.18);
 }
 
-/* Section label */
-html:not(.dark) .section-label {
-  color: rgb(100 116 139) !important;
+
+/* Force readable sidebar section labels + subtitle */
+html:not(.dark) .section-label { color: rgb(71 85 105) !important; } /* slate-600 */
+.dark .section-label { color: rgba(255,255,255,0.55) !important; }
+
+html:not(.dark) .brand-sub { color: rgb(100 116 139) !important; } /* slate-500 */
+.dark .brand-sub { color: rgba(255,255,255,0.45) !important; }
+
+.hr { height: 1px; background: rgba(0,0,0,0.08); }
+.dark .hr { background: rgba(255,255,255,0.12); }
+
+\/* Crisp light surfaces for interactive elements */
+html:not(.dark) .ring-1 { box-shadow: 0 0 0 0.5px rgba(2,6,23,0.08) inset; }
+
+/* Make keyboard focus a touch brighter on light */
+html:not(.dark) :focus-visible {
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.35) !important; /* --ring fallback */
 }
 
-/* =====================
-   Buttons — light theme fixes
-   ===================== */
-
-html:not(.dark) button {
-  color: rgb(30 41 59) !important;
-}
-
-html:not(.dark) .btn-brand {
-  color: white !important;
-}
-
-html:not(.dark) .btn-ghost {
-  background: transparent;
-  color: rgb(30 41 59) !important;
-}
-
-html:not(.dark) .btn-outline {
-  border-color: rgba(0,0,0,0.18);
-  color: rgb(30 41 59) !important;
-}
-
-/* Stronger hover */
-html:not(.dark) .btn-soft:hover {
-  background: rgba(0,0,0,0.08);
+/* Slightly stronger light-mode headings inside content areas */
+html:not(.dark) .content h3 {
+  color: rgb(15 23 42) !important; /* slate-900 */
 }
