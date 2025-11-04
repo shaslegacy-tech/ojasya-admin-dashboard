@@ -23,11 +23,10 @@ export default function Button({
         size === 'lg' && 'text-base px-5 py-2.5',
         // brand
         variant === 'brand' && [
-          'text-white shadow-soft',
-          'bg-gradient-to-br from-indigo-500 via-violet-500 to-fuchsia-500',
-          'hover:brightness-[1.06] hover:shadow-elevated active:brightness-95',
-          'dark:from-violet-400 dark:via-indigo-400 dark:to-sky-400',
-          'dark:text-[rgb(10,14,28)]'
+           '!text-white [&_*]:!text-white',
+            'shadow-soft bg-gradient-to-br from-indigo-500 via-violet-500 to-fuchsia-500',
+            'hover:brightness-[1.06] hover:shadow-elevated active:brightness-95',
+            'disabled:opacity-60 disabled:pointer-events-none'
         ],
         // primary
         variant === 'primary' && [
@@ -36,20 +35,20 @@ export default function Button({
         ],
         // ghost
         variant === 'ghost' && [
-          '!text-slate-800 [&_*]:!text-slate-800',
-          'dark:!text-white dark:[&_*]:!text-white',
-
-          'bg-black/5 hover:bg-black/10 active:bg-black/15',
-          'dark:bg-white/10 dark:hover:bg-white/14 dark:active:bg-white/20',
-
-          'backdrop-blur-md',
+          'text-slate-800 dark:text-white',
+          '[&_*]:text-slate-800 dark:[&_*]:text-white',
+          'hover:bg-slate-100 active:bg-slate-200',                /* ✅ visible hover */
+          'dark:hover:bg-white/10 dark:active:bg-white/14',
           'disabled:opacity-50 disabled:pointer-events-none'
         ],
         // soft
         variant === 'soft' && [
-          'text-slate-900 bg-surface/70 hover:bg-surface/80 active:bg-surface/90',
-          'dark:text-white dark:bg-white/10 dark:hover:bg-white/14 dark:active:bg-white/18',
-          'backdrop-blur'
+         'text-slate-800 dark:text-white',
+        '[&_*]:text-slate-800 dark:[&_*]:text-white',
+        'bg-slate-100 hover:bg-slate-200 active:bg-slate-300',  /* ✅ stronger light mode */
+        'dark:bg-white/10 dark:hover:bg-white/14 dark:active:bg-white/18',
+        'ring-1 ring-black/10 dark:ring-white/10',
+        'disabled:opacity-50 disabled:pointer-events-none'
         ],
         'disabled:opacity-60 disabled:pointer-events-none',
         className

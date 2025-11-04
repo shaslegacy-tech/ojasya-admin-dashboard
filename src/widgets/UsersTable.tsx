@@ -64,7 +64,7 @@ export default function UsersTable() {
       </div>
       <div className="overflow-x-auto px-2 py-2">
         <table className="min-w-full text-sm">
-          <thead className="text-left text-subtle">
+          <thead className="sticky top-0 z-10 table-thead">
             {table.getHeaderGroups().map(hg => (
               <tr key={hg.id}>
                 {hg.headers.map(h => (
