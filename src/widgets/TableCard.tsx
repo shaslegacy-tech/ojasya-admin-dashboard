@@ -86,10 +86,8 @@ export default function TableCard<T extends { id?: string | number }>({
 
         {rightActions ?? (
           <>
-            <Button variant="soft" size="sm" className="hidden md:inline-flex">
-              Export
-            </Button>
-            <Button variant="brand" size="sm">Create</Button>
+            <Button variant="soft" size="sm" animated>Export</Button>
+            <Button variant="brand" size="sm" animated>Create</Button>
           </>
         )}
       </div>
@@ -152,20 +150,8 @@ export default function TableCard<T extends { id?: string | number }>({
           </span>
         )}
         <div className="flex gap-2">
-          <button
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-            className="rounded-2xl px-2 py-1 bg-black/5 hover:bg-black/8 dark:bg-white/10 dark:hover:bg-white/14 disabled:opacity-40"
-          >
-            Prev
-          </button>
-          <button
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-            className="rounded-2xl px-2 py-1 bg-black/5 hover:bg-black/8 dark:bg-white/10 dark:hover:bg-white/14 disabled:opacity-40"
-          >
-            Next
-          </button>
+          <Button variant="outline" size="sm" animated disabled={!table.getCanPreviousPage()}>Prev</Button>
+          <Button variant="outline" size="sm" animated disabled={!table.getCanNextPage()}>Next</Button>
         </div>
       </div>
     </div>
