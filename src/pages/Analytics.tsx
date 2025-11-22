@@ -4,6 +4,14 @@ import Button from '../ui/Button'
 import { ColumnDef } from '@tanstack/react-table'
 import { Boxes, GraduationCap, ShieldBan, ClipboardList, Download, Plus } from 'lucide-react'
 import clsx from 'clsx'
+import PageTitle from '../ui/PageTitle'
+import SectionTitle from '../ui/SectionTitle'
+import RevenueBreakdownCard from '../widgets/RevenueBreakdownCard'
+import FunnelCard from '../widgets/FunnelCard'
+import RetentionHeatmapCard from '../widgets/RetentionHeatmapCard'
+import ChurnTableCard from '../widgets/ChurnTableCard'
+import FeatureUsageCard from '../widgets/FeatureUsageCard'
+import PerfErrorsAlertsCard from '../widgets/PerfErrorsAlertsCard'
 
 type Row = {
   id: number
@@ -69,40 +77,6 @@ const cardVariants = {
   show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.35, ease: 'easeOut' } }
 }
 
-type SectionTitleProps = {
-  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>
-  label: string
-  hint?: string
-  className?: string
-}
-
-function SectionTitle({ icon: Icon, label, hint, className }: SectionTitleProps) {
-  return (
-    <div className={clsx("relative z-10 flex items-center justify-between", className)}>
-      <div className="flex items-center gap-2">
-        {Icon && (
-          <div className="h-8 w-8 grid place-items-center rounded-xl bg-black/5 dark:bg-white/10 ring-1 ring-black/10 dark:ring-white/10">
-            <Icon className="h-4 w-4 opacity-80" aria-hidden="true" />
-          </div>
-        )}
-        <div>
-          {/* hooks for CSS overrides */}
-          <h3 className="section-title text-sm font-semibold tracking-wide">
-            {label}
-          </h3>
-          {hint && (
-            <p className="section-sub text-xs">
-              {hint}
-            </p>
-          )}
-        </div>
-      </div>
-
-      <div className="hidden xl:block h-[2px] w-24 rounded-full bg-gradient-to-r from-indigo-400 via-fuchsia-400 to-pink-400 opacity-60" />
-    </div>
-  )
-}
-
 export default function Analytics() {
   return (
     <motion.div
@@ -113,14 +87,10 @@ export default function Analytics() {
     >
       {/* Top bar */}
       <div className="flex items-center justify-between">
-        <div className="relative z-10 space-y-1">
-           <h2 className="page-title text-lg md:text-xl font-extrabold tracking-tight">
-            Analytics
-          </h2>
-           <p className="page-sub text-sm">
-            Masters & operational datasets at a glance
-          </p>
-        </div>
+        <PageTitle
+          title="Analytics"
+          subtitle="Masters & operational datasets at a glance"
+        />
         <div className="flex gap-2">
           <Button variant="soft" size="md" animated>
             <Download className="h-4 w-4" /> Download CSV
@@ -197,6 +167,17 @@ export default function Analytics() {
           />
         </motion.div>
       </motion.div>
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <RevenueBreakdownCard />
+        <FunnelCard />
+      </div>
+      <RetentionHeatmapCard />
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <ChurnTableCard />
+        <FeatureUsageCard />
+      </div>
+
+      <PerfErrorsAlertsCard />
     </motion.div>
   )
 }
